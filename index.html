@@ -1,27 +1,66 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI动画生成器</title>
+    <title>HannahsToy - Magical Animation Creator</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <h1>AI动画生成器</h1>
-        <div class="input-section">
-            <textarea id="prompt" placeholder="请输入动画描述..."></textarea>
-            <button id="generate">生成动画</button>
+        <div class="header">
+            <h1 class="title">✨ HannahsToy ✨</h1>
+            <p class="subtitle">Create your magical animations!</p>
         </div>
+        
+        <div class="style-selector">
+            <h2>Choose Your Magic Style ✨</h2>
+            <div class="style-buttons">
+                <button class="style-btn active" data-style="meme">
+                    <span class="emoji">🎭</span>
+                    Quick Meme (1s)
+                </button>
+                <button class="style-btn" data-style="short">
+                    <span class="emoji">🎬</span>
+                    Short Story
+                </button>
+                <button class="style-btn" data-style="long">
+                    <span class="emoji">📖</span>
+                    Full Adventure
+                </button>
+            </div>
+        </div>
+
+        <div class="input-section">
+            <div class="input-container">
+                <textarea id="prompt" placeholder="Describe your magical animation... 🎨✨"></textarea>
+                <div class="character-count">0/100</div>
+            </div>
+            <button id="generate" class="glow-button">
+                <span class="sparkle">✨</span>
+                Create Magic
+                <span class="sparkle">✨</span>
+            </button>
+        </div>
+
         <div class="result-section">
             <div id="loading" class="hidden">
                 <div class="spinner"></div>
-                <p>正在生成动画，请稍候...</p>
+                <p class="loading-text">Creating magic... ✨</p>
             </div>
             <div id="result" class="hidden">
                 <video id="animation" controls></video>
-                <button id="download">下载动画</button>
+                <button id="download" class="glow-button">
+                    <span class="sparkle">💫</span>
+                    Save Your Magic
+                    <span class="sparkle">💫</span>
+                </button>
             </div>
+        </div>
+
+        <div class="footer">
+            <p>Made with ❤️ by HannahsToy</p>
         </div>
     </div>
     <script src="script.js"></script>
