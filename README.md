@@ -11,7 +11,7 @@ HannahsToy is an innovative web application that combines AI technology with cre
 - AI Meme Generator: Create unique, emotionally resonant memes in seconds
 - Multiple Style*: Choose from Quick Meme (1s), Short Story, or Full Adventure
 - Character Limit: Smart 100-character limit to ensure concise, impactful content
-- User-Friendly Interface: Cute, Jellycat-inspired design for an enjoyable experience
+- User-Friendly Interface: Cute, Jellycat-inspired design for an enjoyable experience.
 
 Coming Soon
 - Face Swap Technology: Advanced AI to create realistic digital representations
