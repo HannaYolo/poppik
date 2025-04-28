@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const characterCount = document.querySelector('.character-count');
 
     const API_URL = 'https://dev.runwayml.com/organization/013d3075-84b2-4289-87c2-ba28e741d7c6/api-keys';
-    const API_KEY = 'key_69a31953c544effd12161aa1063e5fad0d819a825941ba0c5d3cf3a5ff03677bc7ca1bdf1b01b06cd1f3d1532bf6bdfda9b595449c3f50703adf6ae4c6c47c92';
+    const API_KEY = 'key_1c58089272e71eb5538f681eea7d2b0db6ad3e58eec978aaa5c2958739d07dc9ed550ac204440ad743da08e242368f4986d031e1d4a6515a03f46d41d26be2e5';
 
     let selectedStyle = 'meme';
 
