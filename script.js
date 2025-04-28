@@ -38,26 +38,52 @@ document.addEventListener('DOMContentLoaded', () => {
         hideResult();
 
         try {
-            // 使用代理服务器来避免 CORS 问题
-            const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-            const targetUrl = 'https://picsum.photos/500/500';
+            console.log('Starting image generation...');
+            console.log('Current URL:', window.location.href);
             
-            const response = await fetch(proxyUrl + targetUrl, {
+            // 使用不同的图片 API 端点
+            const apiUrl = 'https://picsum.photos/500/500';
+            console.log('API URL:', apiUrl);
+
+            const response = await fetch(apiUrl, {
+                method: 'GET',
+                mode: 'no-cors', // 尝试使用 no-cors 模式
+                cache: 'no-cache',
                 headers: {
-                    'Origin': window.location.origin
+                    'Accept': 'image/*'
                 }
             });
 
-            if (!response.ok) {
+            console.log('Response status:', response.status);
+            console.log('Response type:', response.type);
+            console.log('Response headers:', response.headers);
+
+            if (!response.ok && response.type !== 'opaque') {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const imageUrl = response.url;
-            displayResult(imageUrl);
+            // 直接使用图片 URL
+            const imageUrl = apiUrl;
+            console.log('Image URL:', imageUrl);
+            
+            // 预加载图片
+            const img = new Image();
+            img.onload = () => {
+                console.log('Image loaded successfully');
+                displayResult(imageUrl);
+                hideLoading();
+            };
+            img.onerror = (error) => {
+                console.error('Image load error:', error);
+                showError('Failed to load image. Please try again.');
+                hideLoading();
+            };
+            img.src = imageUrl;
+
         } catch (error) {
             console.error('Error details:', error);
+            console.error('Error stack:', error.stack);
             showError(`Error creating image: ${error.message}`);
-        } finally {
             hideLoading();
         }
     });
