@@ -8,8 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const styleButtons = document.querySelectorAll('.style-btn');
     const characterCount = document.querySelector('.character-count');
 
-    // 使用 DALL-E API
-    const API_URL = 'https://api.openai.com/v1/images/generations';
+    const API_URL = 'https://dev.runwayml.com/organization/013d3075-84b2-4289-87c2-ba28e741d7c6/api-keys';
     const API_KEY = 'key_69a31953c544effd12161aa1063e5fad0d819a825941ba0c5d3cf3a5ff03677bc7ca1bdf1b01b06cd1f3d1532bf6bdfda9b595449c3f50703adf6ae4c6c47c92';
 
     let selectedStyle = 'meme';
