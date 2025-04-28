@@ -210,4 +210,26 @@ textarea:focus {
     0% { transform: translateY(0px); }
     50% { transform: translateY(-10px); }
     100% { transform: translateY(0px); }
+}
+
+.error-message {
+    background-color: #ffebee;
+    border: 2px solid #ffcdd2;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px 0;
+    text-align: center;
+    color: #c62828;
+    animation: shake 0.5s;
+}
+
+.error-message p {
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
 } 

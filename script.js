@@ -43,8 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        loadingDiv.classList.remove('hidden');
-        resultDiv.classList.add('hidden');
+        showLoading();
+        hideResult();
 
         try {
             console.log('Sending request to API...');
@@ -55,49 +55,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${API_KEY}`
+                    'Authorization': `Bearer ${API_KEY}`,
+                    'Accept': 'application/json'
                 },
                 body: JSON.stringify({
                     prompt: prompt,
                     n: 1,
-                    size: "512x512"
-                })
+                    size: "1024x1024"
+                }),
+                mode: 'cors'
             });
 
             console.log('Response status:', response.status);
             console.log('Response headers:', response.headers);
 
             if (!response.ok) {
-                const errorData = await response.json();
-                console.error('API Error:', errorData);
-                throw new Error(`API request failed: ${errorData.error?.message || response.statusText}`);
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             const data = await response.json();
             console.log('API Response:', data);
-            
-            if (!data.data || !data.data[0]) {
-                throw new Error('No image data received');
+
+            if (data.error) {
+                throw new Error(data.error.message);
             }
-            
-            // 将生成的图片显示在页面上
-            const img = document.createElement('img');
-            img.src = data.data[0].url;
-            img.style.width = '100%';
-            img.style.maxWidth = '500px';
-            img.style.borderRadius = '15px';
-            
-            // 清空并添加图片到结果区域
-            resultDiv.innerHTML = '';
-            resultDiv.appendChild(img);
-            
-            // 显示结果
-            loadingDiv.classList.add('hidden');
-            resultDiv.classList.remove('hidden');
+
+            if (!data.data || !data.data[0] || !data.data[0].url) {
+                throw new Error('Invalid response format from API');
+            }
+
+            const imageUrl = data.data[0].url;
+            displayResult(imageUrl);
         } catch (error) {
-            console.error('Error:', error);
-            alert('Error creating image: ' + error.message);
-            loadingDiv.classList.add('hidden');
+            console.error('Error details:', error);
+            showError(`Error creating image: ${error.message}`);
+        } finally {
+            hideLoading();
         }
     });
 
@@ -112,4 +105,44 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.removeChild(a);
         }
     });
-}); 
+});
+
+function showLoading() {
+    const loadingDiv = document.getElementById('loading');
+    loadingDiv.classList.remove('hidden');
+}
+
+function hideLoading() {
+    const loadingDiv = document.getElementById('loading');
+    loadingDiv.classList.add('hidden');
+}
+
+function showResult() {
+    const resultDiv = document.getElementById('result');
+    resultDiv.classList.remove('hidden');
+}
+
+function hideResult() {
+    const resultDiv = document.getElementById('result');
+    resultDiv.classList.add('hidden');
+}
+
+function showError(message) {
+    const resultDiv = document.getElementById('result');
+    resultDiv.innerHTML = `
+        <div class="error-message">
+            <p>${message}</p>
+            <p>Please try again later or check your internet connection.</p>
+        </div>
+    `;
+    resultDiv.classList.remove('hidden');
+}
+
+function displayResult(imageUrl) {
+    const resultDiv = document.getElementById('result');
+    resultDiv.innerHTML = `
+        <img src="${imageUrl}" alt="Generated image" style="width: 100%; max-width: 500px; border-radius: 15px;">
+        <button class="glow-button" onclick="window.open('${imageUrl}', '_blank')">Open in New Tab</button>
+    `;
+    resultDiv.classList.remove('hidden');
+} 
