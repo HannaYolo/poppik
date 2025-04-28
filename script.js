@@ -78,7 +78,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.message || 'API request failed');
+                console.error('API Error:', errorData);
+                throw new Error(`API request failed: ${errorData.message || response.statusText}`);
             }
 
             const data = await response.json();
