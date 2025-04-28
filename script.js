@@ -4,12 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const promptInput = document.getElementById('prompt');
     const loadingDiv = document.getElementById('loading');
     const resultDiv = document.getElementById('result');
-    const animationVideo = document.getElementById('animation');
     const styleButtons = document.querySelectorAll('.style-btn');
     const characterCount = document.querySelector('.character-count');
-
-    const API_URL = 'https://api.deepai.org/api/text2img';
-    const API_KEY = 'quickstart-QUdJIGlzIGNvbWluZy4uLi4K';
 
     let selectedStyle = 'meme';
 
@@ -34,12 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     generateBtn.addEventListener('click', async () => {
         const prompt = promptInput.value.trim();
         if (!prompt) {
-            alert('Please enter an animation description! 🎨');
-            return;
-        }
-
-        if (prompt.length > 100) {
-            alert('Description is too long! Please keep it under 100 characters. ✨');
+            alert('Please enter a description first!');
             return;
         }
 
@@ -47,35 +38,21 @@ document.addEventListener('DOMContentLoaded', () => {
         hideResult();
 
         try {
-            console.log('Sending request to API...');
-            console.log('API URL:', API_URL);
-            console.log('Prompt:', prompt);
-
-            const formData = new FormData();
-            formData.append('text', prompt);
-
-            const response = await fetch(API_URL, {
-                method: 'POST',
+            // 使用代理服务器来避免 CORS 问题
+            const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+            const targetUrl = 'https://picsum.photos/500/500';
+            
+            const response = await fetch(proxyUrl + targetUrl, {
                 headers: {
-                    'api-key': API_KEY
-                },
-                body: formData
+                    'Origin': window.location.origin
+                }
             });
 
             if (!response.ok) {
-                const errorText = await response.text();
-                console.error('Error response:', errorText);
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const data = await response.json();
-            console.log('API Response:', data);
-
-            if (!data.output_url) {
-                throw new Error('Invalid response format from API');
-            }
-
-            const imageUrl = data.output_url;
+            const imageUrl = response.url;
             displayResult(imageUrl);
         } catch (error) {
             console.error('Error details:', error);
