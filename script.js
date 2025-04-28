@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const characterCount = document.querySelector('.character-count');
 
     // 设置你的 API key
-    const RUNWAY_API_KEY = 'key_15a0449216e9caae371dce153ed4f4ab3781e2cc7b484540117f4959a3c7211da825139709e48c24cd1f663c36d6e4280222cee96ab1a3486d238a1d886aa05b';
+    const RUNWAY_API_KEY = 'key_824b82caaf55800eedc6a34a0cdb0e020953216abd7f990a1d29771e569bbfbe354a14d73126ff9a6619d5a7e48ef9331e039d5c4cd354aa2db5f47e4fb1e857';
 
     let selectedStyle = 'meme'; // 默认选择表情包风格
 
