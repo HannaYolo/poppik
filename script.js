@@ -8,8 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const styleButtons = document.querySelectorAll('.style-btn');
     const characterCount = document.querySelector('.character-count');
 
-    // 使用 Stable Diffusion API
-    const API_URL = 'https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image';
+    // 使用 DALL-E API
+    const API_URL = 'https://api.openai.com/v1/images/generations';
     const API_KEY = 'sk-824b82caaf55800eedc6a34a0cdb0e020953216abd7f990a1d29771e569bbfbe354a14d73126ff9a6619d5a7e48ef9331e039d5c4cd354aa2db5f47e4fb1e857';
 
     let selectedStyle = 'meme';
@@ -52,39 +52,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${API_KEY}`,
-                    'Accept': 'application/json'
+                    'Authorization': `Bearer ${API_KEY}`
                 },
                 body: JSON.stringify({
-                    text_prompts: [
-                        {
-                            text: prompt,
-                            weight: 1
-                        }
-                    ],
-                    cfg_scale: 7,
-                    height: 512,
-                    width: 512,
-                    steps: 30,
-                    samples: 1
+                    prompt: prompt,
+                    n: 1,
+                    size: "512x512"
                 })
             });
 
             if (!response.ok) {
                 const errorData = await response.json();
                 console.error('API Error:', errorData);
-                throw new Error(`API request failed: ${errorData.message || response.statusText}`);
+                throw new Error(`API request failed: ${errorData.error?.message || response.statusText}`);
             }
 
             const data = await response.json();
             
-            if (!data.artifacts || !data.artifacts[0]) {
+            if (!data.data || !data.data[0]) {
                 throw new Error('No image data received');
             }
             
             // 将生成的图片显示在页面上
             const img = document.createElement('img');
-            img.src = `data:image/png;base64,${data.artifacts[0].base64}`;
+            img.src = data.data[0].url;
             img.style.width = '100%';
             img.style.maxWidth = '500px';
             img.style.borderRadius = '15px';
