@@ -1,14 +1,120 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const generateBtn = document.getElementById('generate');
-    const downloadBtn = document.getElementById('download');
-    const promptInput = document.getElementById('prompt');
-    const loadingDiv = document.getElementById('loading');
-    const resultDiv = document.getElementById('result');
+    // 获取DOM元素
+    const chatMessages = document.getElementById('chat-messages');
+    const userInput = document.getElementById('user-input');
+    const sendButton = document.getElementById('send-button');
+    const avatar = document.getElementById('avatar');
+    const moodText = document.querySelector('.mood-text');
     const styleButtons = document.querySelectorAll('.style-btn');
-    const characterCount = document.querySelector('.character-count');
+    const voiceSelect = document.getElementById('voice-select');
+    const speedSlider = document.getElementById('speed-slider');
 
-    let selectedStyle = 'meme';
+    let selectedStyle = 'casual';
+    let currentMood = 'listening';
 
+    // 初始化语音合成
+    const synth = window.speechSynthesis;
+    let voices = [];
+
+    // 加载可用语音
+    function loadVoices() {
+        voices = synth.getVoices();
+        voiceSelect.innerHTML = voices
+            .filter(voice => voice.lang.includes('en'))
+            .map(voice => `<option value="${voice.name}">${voice.name}</option>`)
+            .join('');
+    }
+
+    if (synth.onvoiceschanged !== undefined) {
+        synth.onvoiceschanged = loadVoices;
+    }
+
+    // 更新心情指示器
+    function updateMood(mood) {
+        currentMood = mood;
+        moodText.textContent = mood.charAt(0).toUpperCase() + mood.slice(1);
+        avatar.style.borderColor = getMoodColor(mood);
+    }
+
+    function getMoodColor(mood) {
+        const colors = {
+            listening: '#00ff9d',
+            thinking: '#00b8ff',
+            speaking: '#ff9d00',
+            error: '#ff4444'
+        };
+        return colors[mood] || colors.listening;
+    }
+
+    // 添加消息到聊天界面
+    function addMessage(text, isUser = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${isUser ? 'user-message' : 'ai-message'}`;
+        messageDiv.textContent = text;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // 处理AI响应
+    async function handleAIResponse(userMessage) {
+        updateMood('thinking');
+        
+        try {
+            // 这里可以替换为实际的AI API调用
+            const response = await simulateAIResponse(userMessage);
+            
+            updateMood('speaking');
+            addMessage(response);
+            
+            // 语音合成
+            const utterance = new SpeechSynthesisUtterance(response);
+            const selectedVoice = voices.find(voice => voice.name === voiceSelect.value);
+            if (selectedVoice) {
+                utterance.voice = selectedVoice;
+            }
+            utterance.rate = speedSlider.value / 3;
+            synth.speak(utterance);
+            
+            utterance.onend = () => {
+                updateMood('listening');
+            };
+        } catch (error) {
+            updateMood('error');
+            addMessage('Sorry, I encountered an error. Please try again.');
+            console.error('Error:', error);
+        }
+    }
+
+    // 模拟AI响应（可以替换为实际的API调用）
+    function simulateAIResponse(message) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                const responses = {
+                    casual: [
+                        "That's interesting! Tell me more about it.",
+                        "I see what you mean. How does that make you feel?",
+                        "I'm here to chat! What else would you like to talk about?"
+                    ],
+                    professional: [
+                        "I understand your point. Let me provide some insights.",
+                        "Based on the information provided, I would suggest...",
+                        "Let me analyze that for you."
+                    ],
+                    creative: [
+                        "That's a fascinating idea! Let's explore it further.",
+                        "I love your creativity! What inspired you to think about this?",
+                        "Let's brainstorm some unique solutions together!"
+                    ]
+                };
+                
+                const styleResponses = responses[selectedStyle];
+                const randomResponse = styleResponses[Math.floor(Math.random() * styleResponses.length)];
+                resolve(randomResponse);
+            }, 1000);
+        });
+    }
+
+    // 事件监听器
     styleButtons.forEach(button => {
         button.addEventListener('click', () => {
             styleButtons.forEach(btn => btn.classList.remove('active'));
@@ -17,126 +123,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    promptInput.addEventListener('input', () => {
-        const count = promptInput.value.length;
-        characterCount.textContent = `${count}/100`;
-        if (count > 100) {
-            characterCount.style.color = '#ff69b4';
-        } else {
-            characterCount.style.color = '#666';
+    sendButton.addEventListener('click', () => {
+        const message = userInput.value.trim();
+        if (message) {
+            addMessage(message, true);
+            userInput.value = '';
+            handleAIResponse(message);
         }
     });
 
-    generateBtn.addEventListener('click', async () => {
-        const prompt = promptInput.value.trim();
-        if (!prompt) {
-            alert('Please enter a description first!');
-            return;
-        }
-
-        showLoading();
-        hideResult();
-
-        try {
-            console.log('Starting image generation...');
-            console.log('Current URL:', window.location.href);
-            
-            // 使用不同的图片 API 端点
-            const apiUrl = 'https://picsum.photos/500/500';
-            console.log('API URL:', apiUrl);
-
-            const response = await fetch(apiUrl, {
-                method: 'GET',
-                mode: 'no-cors', // 尝试使用 no-cors 模式
-                cache: 'no-cache',
-                headers: {
-                    'Accept': 'image/*'
-                }
-            });
-
-            console.log('Response status:', response.status);
-            console.log('Response type:', response.type);
-            console.log('Response headers:', response.headers);
-
-            if (!response.ok && response.type !== 'opaque') {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            // 直接使用图片 URL
-            const imageUrl = apiUrl;
-            console.log('Image URL:', imageUrl);
-            
-            // 预加载图片
-            const img = new Image();
-            img.onload = () => {
-                console.log('Image loaded successfully');
-                displayResult(imageUrl);
-                hideLoading();
-            };
-            img.onerror = (error) => {
-                console.error('Image load error:', error);
-                showError('Failed to load image. Please try again.');
-                hideLoading();
-            };
-            img.src = imageUrl;
-
-        } catch (error) {
-            console.error('Error details:', error);
-            console.error('Error stack:', error.stack);
-            showError(`Error creating image: ${error.message}`);
-            hideLoading();
+    userInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendButton.click();
         }
     });
 
-    downloadBtn.addEventListener('click', () => {
-        const img = resultDiv.querySelector('img');
-        if (img) {
-            const a = document.createElement('a');
-            a.href = img.src;
-            a.download = `hannahstoy-${selectedStyle}.png`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        }
-    });
-});
-
-function showLoading() {
-    const loadingDiv = document.getElementById('loading');
-    loadingDiv.classList.remove('hidden');
-}
-
-function hideLoading() {
-    const loadingDiv = document.getElementById('loading');
-    loadingDiv.classList.add('hidden');
-}
-
-function showResult() {
-    const resultDiv = document.getElementById('result');
-    resultDiv.classList.remove('hidden');
-}
-
-function hideResult() {
-    const resultDiv = document.getElementById('result');
-    resultDiv.classList.add('hidden');
-}
-
-function showError(message) {
-    const resultDiv = document.getElementById('result');
-    resultDiv.innerHTML = `
-        <div class="error-message">
-            <p>${message}</p>
-            <p>Please try again later or check your internet connection.</p>
-        </div>
-    `;
-    resultDiv.classList.remove('hidden');
-}
-
-function displayResult(imageUrl) {
-    const resultDiv = document.getElementById('result');
-    resultDiv.innerHTML = `
-        <img src="${imageUrl}" alt="Generated image" style="width: 100%; max-width: 500px; border-radius: 15px;">
-        <button class="glow-button" onclick="window.open('${imageUrl}', '_blank')">Open in New Tab</button>
-    `;
-    resultDiv.classList.remove('hidden');
-} 
+    // 初始化欢迎消息
+    addMessage("Hello! I'm your AI assistant. How can I help you today?");
+}); 

@@ -3,64 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HannahsToy - Magical Animation Creator</title>
+    <title>HannahsToy - AI Digital Human</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1 class="title">✨ HannahsToy ✨</h1>
-            <p class="subtitle">Create your magical animations!</p>
+            <h1 class="title">HannahsToy</h1>
+            <p class="subtitle">AI Digital Human Interface</p>
         </div>
-        
-        <div class="style-selector">
-            <h2>Choose Your Magic Style ✨</h2>
-            <div class="style-buttons">
-                <button class="style-btn active" data-style="meme">
-                    <span class="emoji">🎭</span>
-                    Quick Meme (1s)
-                </button>
-                <button class="style-btn" data-style="short">
-                    <span class="emoji">🎬</span>
-                    Short Story
-                </button>
-                <button class="style-btn" data-style="long">
-                    <span class="emoji">📖</span>
-                    Full Adventure
-                </button>
+
+        <div class="digital-human-section">
+            <div class="avatar-container">
+                <div class="avatar" id="avatar">
+                    <!-- Avatar will be displayed here -->
+                </div>
+                <div class="mood-indicator">
+                    <span class="mood-dot"></span>
+                    <span class="mood-text">Listening</span>
+                </div>
+            </div>
+            
+            <div class="chat-container">
+                <div class="chat-messages" id="chat-messages">
+                    <!-- Chat messages will appear here -->
+                </div>
+                <div class="input-group">
+                    <textarea id="user-input" placeholder="Type your message here..."></textarea>
+                    <button id="send-button" class="glow-button">
+                        Send
+                    </button>
+                </div>
             </div>
         </div>
 
-        <div class="input-section">
-            <div class="input-container">
-                <textarea id="prompt" placeholder="Describe your magical animation... 🎨✨"></textarea>
-                <div class="character-count">0/100</div>
+        <div class="controls-section">
+            <div class="style-selector">
+                <h2>Select Interaction Mode</h2>
+                <div class="style-buttons">
+                    <button class="style-btn active" data-style="casual">
+                        <span class="emoji">😊</span>
+                        Casual Chat
+                    </button>
+                    <button class="style-btn" data-style="professional">
+                        <span class="emoji">💼</span>
+                        Professional
+                    </button>
+                    <button class="style-btn" data-style="creative">
+                        <span class="emoji">🎨</span>
+                        Creative Mode
+                    </button>
+                </div>
             </div>
-            <button id="generate" class="glow-button">
-                <span class="sparkle">✨</span>
-                Create Magic
-                <span class="sparkle">✨</span>
-            </button>
-        </div>
 
-        <div class="result-section">
-            <div id="loading" class="hidden">
-                <div class="spinner"></div>
-                <p class="loading-text">Creating magic... ✨</p>
-            </div>
-            <div id="result" class="hidden">
-                <video id="animation" controls></video>
-                <button id="download" class="glow-button">
-                    <span class="sparkle">💫</span>
-                    Save Your Magic
-                    <span class="sparkle">💫</span>
-                </button>
+            <div class="settings-panel">
+                <h2>Settings</h2>
+                <div class="setting-item">
+                    <label>Voice</label>
+                    <select id="voice-select">
+                        <option value="female1">Female Voice 1</option>
+                        <option value="female2">Female Voice 2</option>
+                        <option value="male1">Male Voice 1</option>
+                    </select>
+                </div>
+                <div class="setting-item">
+                    <label>Response Speed</label>
+                    <input type="range" id="speed-slider" min="1" max="5" value="3">
+                </div>
             </div>
         </div>
 
         <div class="footer">
-            <p>Made with ❤️ by HannahsToy</p>
+            <p>Powered by Advanced AI Technology</p>
         </div>
     </div>
     <script src="script.js"></script>

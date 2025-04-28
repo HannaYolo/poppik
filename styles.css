@@ -1,235 +1,340 @@
+:root {
+    --primary-color: #00ff9d;
+    --secondary-color: #00b8ff;
+    --background-dark: #0a0a0a;
+    --background-light: #1a1a1a;
+    --text-color: #ffffff;
+    --border-color: #333333;
+    --chat-bg: #1f1f1f;
+    --user-message-bg: #2a2a2a;
+    --ai-message-bg: #333333;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
 }
 
 body {
-    font-family: 'Comic Neue', cursive;
-    background: linear-gradient(135deg, #ffd1dc 0%, #ffb6c1 100%);
+    background-color: var(--background-dark);
+    color: var(--text-color);
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #333;
+    padding: 20px;
 }
 
 .container {
-    background: rgba(255, 255, 255, 0.9);
-    padding: 2rem;
+    max-width: 800px;
+    width: 100%;
+    background: var(--background-light);
     border-radius: 20px;
-    box-shadow: 0 0 30px rgba(255, 192, 203, 0.3);
-    width: 90%;
-    max-width: 600px;
-    backdrop-filter: blur(10px);
-    border: 2px solid rgba(255, 255, 255, 0.5);
+    padding: 30px;
+    box-shadow: 0 0 30px rgba(0, 255, 157, 0.1);
+    border: 1px solid var(--border-color);
 }
 
 .header {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 40px;
+    position: relative;
 }
 
 .title {
-    font-family: 'Comic Neue', cursive;
     font-size: 3rem;
-    color: #ff69b4;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 0.5rem;
+    font-weight: 700;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 20px rgba(0, 255, 157, 0.3);
+    margin-bottom: 10px;
 }
 
 .subtitle {
+    color: #888;
     font-size: 1.2rem;
-    color: #666;
-    font-style: italic;
 }
 
-.style-selector {
-    margin-bottom: 2rem;
-    text-align: center;
-}
-
-.style-selector h2 {
-    font-family: 'Comic Neue', cursive;
-    margin-bottom: 1rem;
-    color: #ff69b4;
-    font-size: 1.5rem;
-}
-
-.style-buttons {
+/* 数字人部分样式 */
+.digital-human-section {
     display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
+    gap: 30px;
+    margin-bottom: 40px;
 }
 
-.style-btn {
-    background: rgba(255, 192, 203, 0.3);
-    border: 2px solid #ff69b4;
-    padding: 0.8rem 1.5rem;
-    border-radius: 15px;
-    color: #ff69b4;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-family: 'Comic Neue', cursive;
-    font-size: 1rem;
+.avatar-container {
+    flex: 1;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
 }
 
-.style-btn.active {
-    background: #ff69b4;
-    color: white;
-    box-shadow: 0 0 10px rgba(255, 105, 180, 0.3);
-}
-
-.style-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0 15px rgba(255, 105, 180, 0.3);
-}
-
-.emoji {
-    font-size: 1.2rem;
-}
-
-.input-section {
-    margin-bottom: 2rem;
-}
-
-.input-container {
+.avatar {
+    width: 200px;
+    height: 200px;
+    background: var(--background-dark);
+    border-radius: 50%;
+    border: 3px solid var(--primary-color);
+    margin-bottom: 20px;
     position: relative;
-    margin-bottom: 1rem;
+    overflow: hidden;
 }
 
-textarea {
-    width: 100%;
-    height: 150px;
-    padding: 1rem;
-    border: 2px solid #ffb6c1;
-    border-radius: 15px;
-    resize: none;
-    font-size: 1rem;
-    background: rgba(255, 255, 255, 0.8);
-    color: #333;
-    font-family: 'Comic Neue', cursive;
-}
-
-textarea:focus {
-    outline: none;
-    border-color: #ff69b4;
-    box-shadow: 0 0 10px rgba(255, 105, 180, 0.3);
-}
-
-.character-count {
+.avatar::before {
+    content: '';
     position: absolute;
-    bottom: 10px;
-    right: 10px;
-    color: #666;
-    font-size: 0.8rem;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent, rgba(0, 255, 157, 0.1), transparent);
+    animation: avatar-shine 3s infinite;
 }
 
-.glow-button {
-    background: linear-gradient(45deg, #ff69b4, #ffb6c1);
-    color: white;
-    border: none;
-    padding: 1rem 2rem;
-    border-radius: 15px;
-    cursor: pointer;
-    font-size: 1.2rem;
-    font-family: 'Comic Neue', cursive;
-    transition: all 0.3s ease;
-    width: 100%;
+@keyframes avatar-shine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.mood-indicator {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
+    gap: 10px;
 }
 
-.glow-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0 20px rgba(255, 105, 180, 0.5);
+.mood-dot {
+    width: 10px;
+    height: 10px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
 }
 
-.sparkle {
-    font-size: 1.2rem;
-    animation: sparkle 1s infinite;
-}
-
-@keyframes sparkle {
+@keyframes pulse {
     0% { opacity: 0.5; }
     50% { opacity: 1; }
     100% { opacity: 0.5; }
 }
 
-.result-section {
-    text-align: center;
+.mood-text {
+    color: var(--primary-color);
+    font-size: 0.9rem;
 }
 
-.hidden {
-    display: none;
-}
-
-#animation {
-    width: 100%;
-    max-width: 500px;
-    margin: 1rem 0;
+/* 聊天界面样式 */
+.chat-container {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    background: var(--chat-bg);
     border-radius: 15px;
-    border: 2px solid #ffb6c1;
+    padding: 20px;
+    height: 500px;
 }
 
-.spinner {
-    border: 4px solid rgba(255, 192, 203, 0.3);
-    border-top: 4px solid #ff69b4;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-    margin: 0 auto 1rem;
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    padding: 10px;
 }
 
-.loading-text {
-    font-family: 'Comic Neue', cursive;
-    color: #ff69b4;
-    font-size: 1.2rem;
+.message {
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    border-radius: 10px;
+    max-width: 80%;
+}
+
+.user-message {
+    background: var(--user-message-bg);
+    margin-left: auto;
+    border: 1px solid var(--primary-color);
+}
+
+.ai-message {
+    background: var(--ai-message-bg);
+    margin-right: auto;
+    border: 1px solid var(--secondary-color);
+}
+
+.input-group {
+    display: flex;
+    gap: 10px;
+}
+
+#user-input {
+    flex: 1;
+    min-height: 50px;
+    padding: 10px;
+    background: var(--background-dark);
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    color: var(--text-color);
+    resize: none;
+}
+
+#user-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 15px rgba(0, 255, 157, 0.2);
+}
+
+/* 控制面板样式 */
+.controls-section {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.style-selector {
+    flex: 1;
+}
+
+.style-selector h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+}
+
+.style-buttons {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.style-btn {
+    background: var(--background-dark);
+    border: 2px solid var(--border-color);
+    color: var(--text-color);
+    padding: 15px 25px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1rem;
+}
+
+.style-btn:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 15px rgba(0, 255, 157, 0.2);
+}
+
+.style-btn.active {
+    background: var(--primary-color);
+    color: var(--background-dark);
+    border-color: var(--primary-color);
+}
+
+.settings-panel {
+    flex: 1;
+    background: var(--background-dark);
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.setting-item {
+    margin-bottom: 20px;
+}
+
+.setting-item label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--primary-color);
+}
+
+.setting-item select,
+.setting-item input {
+    width: 100%;
+    padding: 8px;
+    background: var(--background-light);
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    color: var(--text-color);
+}
+
+.glow-button {
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    color: var(--background-dark);
+    border: none;
+    padding: 15px 30px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.glow-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(0, 255, 157, 0.4);
+}
+
+.glow-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    background-size: 200% 100%;
+    animation: shine 3s infinite;
+}
+
+@keyframes shine {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
 }
 
 .footer {
     text-align: center;
-    margin-top: 2rem;
+    margin-top: 40px;
     color: #666;
     font-size: 0.9rem;
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-@keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-    100% { transform: translateY(0px); }
-}
-
-.error-message {
-    background-color: #ffebee;
-    border: 2px solid #ffcdd2;
-    border-radius: 15px;
-    padding: 20px;
-    margin: 20px 0;
-    text-align: center;
-    color: #c62828;
-    animation: shake 0.5s;
-}
-
-.error-message p {
-    margin: 10px 0;
-    font-size: 16px;
-}
-
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+    
+    .title {
+        font-size: 2.5rem;
+    }
+    
+    .style-buttons {
+        flex-direction: column;
+    }
+    
+    .style-btn {
+        width: 100%;
+    }
+    
+    .digital-human-section {
+        flex-direction: column;
+    }
+    
+    .controls-section {
+        flex-direction: column;
+    }
+    
+    .chat-container {
+        height: 400px;
+    }
+    
+    .avatar {
+        width: 150px;
+        height: 150px;
+    }
 } 
