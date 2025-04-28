@@ -8,12 +8,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const styleButtons = document.querySelectorAll('.style-btn');
     const characterCount = document.querySelector('.character-count');
 
-    // 设置你的 API key
-    const RUNWAY_API_KEY = 'key_824b82caaf55800eedc6a34a0cdb0e020953216abd7f990a1d29771e569bbfbe354a14d73126ff9a6619d5a7e48ef9331e039d5c4cd354aa2db5f47e4fb1e857';
+    // 使用 Stable Diffusion API
+    const API_URL = 'https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image';
+    const API_KEY = 'sk-824b82caaf55800eedc6a34a0cdb0e020953216abd7f990a1d29771e569bbfbe354a14d73126ff9a6619d5a7e48ef9331e039d5c4cd354aa2db5f47e4fb1e857';
 
-    let selectedStyle = 'meme'; // 默认选择表情包风格
+    let selectedStyle = 'meme';
 
-    // 处理风格选择
     styleButtons.forEach(button => {
         button.addEventListener('click', () => {
             styleButtons.forEach(btn => btn.classList.remove('active'));
@@ -22,7 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 字符计数
     promptInput.addEventListener('input', () => {
         const count = promptInput.value.length;
         characterCount.textContent = `${count}/100`;
@@ -45,34 +44,29 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // 显示加载动画
         loadingDiv.classList.remove('hidden');
         resultDiv.classList.add('hidden');
 
         try {
-            // 根据选择的风格设置参数
-            const params = {
-                meme: { num_frames: 10, fps: 10 },
-                short: { num_frames: 30, fps: 15 },
-                long: { num_frames: 60, fps: 24 }
-            }[selectedStyle];
-
-            // 使用 Runway ML API
-            const response = await fetch('https://api.runwayml.com/v1/text-to-video/generate', {
+            const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${RUNWAY_API_KEY}`
+                    'Authorization': `Bearer ${API_KEY}`,
+                    'Accept': 'application/json'
                 },
                 body: JSON.stringify({
-                    prompt: prompt,
-                    num_frames: params.num_frames,
-                    fps: params.fps,
-                    width: 512,
+                    text_prompts: [
+                        {
+                            text: prompt,
+                            weight: 1
+                        }
+                    ],
+                    cfg_scale: 7,
                     height: 512,
-                    seed: Math.floor(Math.random() * 1000000),
-                    guidance_scale: 7.5,
-                    num_inference_steps: 50
+                    width: 512,
+                    steps: 30,
+                    samples: 1
                 })
             });
 
@@ -84,29 +78,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const data = await response.json();
             
-            if (!data.video_url) {
-                throw new Error('No video URL received');
+            if (!data.artifacts || !data.artifacts[0]) {
+                throw new Error('No image data received');
             }
             
-            // 设置视频源
-            animationVideo.src = data.video_url;
-            animationVideo.load();
+            // 将生成的图片显示在页面上
+            const img = document.createElement('img');
+            img.src = `data:image/png;base64,${data.artifacts[0].base64}`;
+            img.style.width = '100%';
+            img.style.maxWidth = '500px';
+            img.style.borderRadius = '15px';
+            
+            // 清空并添加图片到结果区域
+            resultDiv.innerHTML = '';
+            resultDiv.appendChild(img);
             
             // 显示结果
             loadingDiv.classList.add('hidden');
             resultDiv.classList.remove('hidden');
         } catch (error) {
             console.error('Error:', error);
-            alert('Error creating animation: ' + error.message);
+            alert('Error creating image: ' + error.message);
             loadingDiv.classList.add('hidden');
         }
     });
 
     downloadBtn.addEventListener('click', () => {
-        if (animationVideo.src) {
+        const img = resultDiv.querySelector('img');
+        if (img) {
             const a = document.createElement('a');
-            a.href = animationVideo.src;
-            a.download = `hannahstoy-${selectedStyle}.mp4`;
+            a.href = img.src;
+            a.download = `hannahstoy-${selectedStyle}.png`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
