@@ -48,6 +48,10 @@ document.addEventListener('DOMContentLoaded', () => {
         resultDiv.classList.add('hidden');
 
         try {
+            console.log('Sending request to API...');
+            console.log('API URL:', API_URL);
+            console.log('Prompt:', prompt);
+
             const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: {
@@ -61,6 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
             });
 
+            console.log('Response status:', response.status);
+            console.log('Response headers:', response.headers);
+
             if (!response.ok) {
                 const errorData = await response.json();
                 console.error('API Error:', errorData);
@@ -68,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const data = await response.json();
+            console.log('API Response:', data);
             
             if (!data.data || !data.data[0]) {
                 throw new Error('No image data received');
