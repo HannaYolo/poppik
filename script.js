@@ -8,8 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const styleButtons = document.querySelectorAll('.style-btn');
     const characterCount = document.querySelector('.character-count');
 
-    const API_URL = 'https://api.runwayml.com/v1/generate';
-    const API_KEY = 'key_1c58089272e71eb5538f681eea7d2b0db6ad3e58eec978aaa5c2958739d07dc9ed550ac204440ad743da08e242368f4986d031e1d4a6515a03f46d41d26be2e5';
+    const API_URL = 'https://api.deepai.org/api/text2img';
+    const API_KEY = 'quickstart-QUdJIGlzIGNvbWluZy4uLi4K';
 
     let selectedStyle = 'meme';
 
@@ -51,24 +51,16 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('API URL:', API_URL);
             console.log('Prompt:', prompt);
 
+            const formData = new FormData();
+            formData.append('text', prompt);
+
             const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${API_KEY}`,
-                    'Accept': 'application/json'
+                    'api-key': API_KEY
                 },
-                body: JSON.stringify({
-                    prompt: prompt,
-                    model: "stable-diffusion-v1-5",
-                    num_inference_steps: 50,
-                    guidance_scale: 7.5
-                }),
-                mode: 'cors'
+                body: formData
             });
-
-            console.log('Response status:', response.status);
-            console.log('Response headers:', response.headers);
 
             if (!response.ok) {
                 const errorText = await response.text();
@@ -79,15 +71,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             console.log('API Response:', data);
 
-            if (data.error) {
-                throw new Error(data.error.message);
-            }
-
-            if (!data.output || !data.output[0]) {
+            if (!data.output_url) {
                 throw new Error('Invalid response format from API');
             }
 
-            const imageUrl = data.output[0];
+            const imageUrl = data.output_url;
             displayResult(imageUrl);
         } catch (error) {
             console.error('Error details:', error);
