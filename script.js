@@ -1,120 +1,40 @@
 document.addEventListener('DOMContentLoaded', () => {
     // 获取DOM元素
-    const chatMessages = document.getElementById('chat-messages');
-    const userInput = document.getElementById('user-input');
-    const sendButton = document.getElementById('send-button');
-    const avatar = document.getElementById('avatar');
-    const moodText = document.querySelector('.mood-text');
+    const previewBox = document.getElementById('preview-box');
+    const promptInput = document.getElementById('prompt-input');
+    const characterCount = document.querySelector('.character-count');
     const styleButtons = document.querySelectorAll('.style-btn');
-    const voiceSelect = document.getElementById('voice-select');
-    const speedSlider = document.getElementById('speed-slider');
+    const durationSlider = document.getElementById('duration-slider');
+    const durationValue = document.getElementById('duration-value');
+    const fpsSelect = document.getElementById('fps-select');
+    const generateBtn = document.getElementById('generate-btn');
+    const playBtn = document.getElementById('play-btn');
+    const pauseBtn = document.getElementById('pause-btn');
+    const downloadBtn = document.getElementById('download-btn');
+    const loadingSection = document.getElementById('loading');
+    const progressBar = document.getElementById('progress');
 
-    let selectedStyle = 'casual';
-    let currentMood = 'listening';
+    let selectedStyle = 'anime';
+    let currentAnimation = null;
+    let isPlaying = false;
 
-    // 初始化语音合成
-    const synth = window.speechSynthesis;
-    let voices = [];
-
-    // 加载可用语音
-    function loadVoices() {
-        voices = synth.getVoices();
-        voiceSelect.innerHTML = voices
-            .filter(voice => voice.lang.includes('en'))
-            .map(voice => `<option value="${voice.name}">${voice.name}</option>`)
-            .join('');
-    }
-
-    if (synth.onvoiceschanged !== undefined) {
-        synth.onvoiceschanged = loadVoices;
-    }
-
-    // 更新心情指示器
-    function updateMood(mood) {
-        currentMood = mood;
-        moodText.textContent = mood.charAt(0).toUpperCase() + mood.slice(1);
-        avatar.style.borderColor = getMoodColor(mood);
-    }
-
-    function getMoodColor(mood) {
-        const colors = {
-            listening: '#00ff9d',
-            thinking: '#00b8ff',
-            speaking: '#ff9d00',
-            error: '#ff4444'
-        };
-        return colors[mood] || colors.listening;
-    }
-
-    // 添加消息到聊天界面
-    function addMessage(text, isUser = false) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message ${isUser ? 'user-message' : 'ai-message'}`;
-        messageDiv.textContent = text;
-        chatMessages.appendChild(messageDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    // 处理AI响应
-    async function handleAIResponse(userMessage) {
-        updateMood('thinking');
-        
-        try {
-            // 这里可以替换为实际的AI API调用
-            const response = await simulateAIResponse(userMessage);
-            
-            updateMood('speaking');
-            addMessage(response);
-            
-            // 语音合成
-            const utterance = new SpeechSynthesisUtterance(response);
-            const selectedVoice = voices.find(voice => voice.name === voiceSelect.value);
-            if (selectedVoice) {
-                utterance.voice = selectedVoice;
-            }
-            utterance.rate = speedSlider.value / 3;
-            synth.speak(utterance);
-            
-            utterance.onend = () => {
-                updateMood('listening');
-            };
-        } catch (error) {
-            updateMood('error');
-            addMessage('Sorry, I encountered an error. Please try again.');
-            console.error('Error:', error);
+    // 更新字符计数
+    promptInput.addEventListener('input', () => {
+        const count = promptInput.value.length;
+        characterCount.textContent = `${count}/500`;
+        if (count > 500) {
+            characterCount.style.color = '#ff4444';
+        } else {
+            characterCount.style.color = '#666';
         }
-    }
+    });
 
-    // 模拟AI响应（可以替换为实际的API调用）
-    function simulateAIResponse(message) {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                const responses = {
-                    casual: [
-                        "That's interesting! Tell me more about it.",
-                        "I see what you mean. How does that make you feel?",
-                        "I'm here to chat! What else would you like to talk about?"
-                    ],
-                    professional: [
-                        "I understand your point. Let me provide some insights.",
-                        "Based on the information provided, I would suggest...",
-                        "Let me analyze that for you."
-                    ],
-                    creative: [
-                        "That's a fascinating idea! Let's explore it further.",
-                        "I love your creativity! What inspired you to think about this?",
-                        "Let's brainstorm some unique solutions together!"
-                    ]
-                };
-                
-                const styleResponses = responses[selectedStyle];
-                const randomResponse = styleResponses[Math.floor(Math.random() * styleResponses.length)];
-                resolve(randomResponse);
-            }, 1000);
-        });
-    }
+    // 更新持续时间显示
+    durationSlider.addEventListener('input', () => {
+        durationValue.textContent = `${durationSlider.value}s`;
+    });
 
-    // 事件监听器
+    // 样式选择
     styleButtons.forEach(button => {
         button.addEventListener('click', () => {
             styleButtons.forEach(btn => btn.classList.remove('active'));
@@ -123,22 +43,88 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    sendButton.addEventListener('click', () => {
-        const message = userInput.value.trim();
-        if (message) {
-            addMessage(message, true);
-            userInput.value = '';
-            handleAIResponse(message);
+    // 生成动画
+    generateBtn.addEventListener('click', async () => {
+        const prompt = promptInput.value.trim();
+        if (!prompt) {
+            alert('Please enter a description for your animation');
+            return;
+        }
+
+        if (prompt.length > 500) {
+            alert('Description is too long. Maximum 500 characters.');
+            return;
+        }
+
+        // 显示加载状态
+        loadingSection.classList.remove('hidden');
+        generateBtn.disabled = true;
+        progressBar.style.width = '0%';
+
+        try {
+            // 这里可以替换为实际的API调用
+            await simulateAnimationGeneration(prompt);
+            
+            // 启用控制按钮
+            playBtn.disabled = false;
+            pauseBtn.disabled = false;
+            downloadBtn.disabled = false;
+        } catch (error) {
+            console.error('Error generating animation:', error);
+            alert('Failed to generate animation. Please try again.');
+        } finally {
+            loadingSection.classList.add('hidden');
+            generateBtn.disabled = false;
         }
     });
 
-    userInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            sendButton.click();
+    // 播放控制
+    playBtn.addEventListener('click', () => {
+        if (currentAnimation && !isPlaying) {
+            isPlaying = true;
+            playBtn.disabled = true;
+            pauseBtn.disabled = false;
+            // 这里添加实际的播放逻辑
         }
     });
 
-    // 初始化欢迎消息
-    addMessage("Hello! I'm your AI assistant. How can I help you today?");
+    pauseBtn.addEventListener('click', () => {
+        if (currentAnimation && isPlaying) {
+            isPlaying = false;
+            playBtn.disabled = false;
+            pauseBtn.disabled = true;
+            // 这里添加实际的暂停逻辑
+        }
+    });
+
+    // 下载动画
+    downloadBtn.addEventListener('click', () => {
+        if (currentAnimation) {
+            // 这里添加实际的下载逻辑
+            const link = document.createElement('a');
+            link.href = currentAnimation;
+            link.download = 'animation.mp4';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    });
+
+    // 模拟动画生成过程
+    async function simulateAnimationGeneration(prompt) {
+        return new Promise((resolve) => {
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 5;
+                progressBar.style.width = `${progress}%`;
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    // 模拟生成的动画URL
+                    currentAnimation = 'https://example.com/animation.mp4';
+                    resolve();
+                }
+            }, 200);
+        });
+    }
 }); 

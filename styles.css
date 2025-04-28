@@ -5,9 +5,7 @@
     --background-light: #1a1a1a;
     --text-color: #ffffff;
     --border-color: #333333;
-    --chat-bg: #1f1f1f;
-    --user-message-bg: #2a2a2a;
-    --ai-message-bg: #333333;
+    --preview-bg: #1f1f1f;
 }
 
 * {
@@ -28,7 +26,7 @@ body {
 }
 
 .container {
-    max-width: 800px;
+    max-width: 1200px;
     width: 100%;
     background: var(--background-light);
     border-radius: 20px;
@@ -58,142 +56,108 @@ body {
     font-size: 1.2rem;
 }
 
-/* 数字人部分样式 */
-.digital-human-section {
+/* 动画预览部分 */
+.animation-section {
     display: flex;
     gap: 30px;
     margin-bottom: 40px;
 }
 
-.avatar-container {
+.preview-container {
     flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    gap: 20px;
 }
 
-.avatar {
-    width: 200px;
-    height: 200px;
-    background: var(--background-dark);
-    border-radius: 50%;
-    border: 3px solid var(--primary-color);
-    margin-bottom: 20px;
-    position: relative;
-    overflow: hidden;
-}
-
-.avatar::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(45deg, transparent, rgba(0, 255, 157, 0.1), transparent);
-    animation: avatar-shine 3s infinite;
-}
-
-@keyframes avatar-shine {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-}
-
-.mood-indicator {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.mood-dot {
-    width: 10px;
-    height: 10px;
-    background: var(--primary-color);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% { opacity: 0.5; }
-    50% { opacity: 1; }
-    100% { opacity: 0.5; }
-}
-
-.mood-text {
-    color: var(--primary-color);
-    font-size: 0.9rem;
-}
-
-/* 聊天界面样式 */
-.chat-container {
-    flex: 2;
-    display: flex;
-    flex-direction: column;
-    background: var(--chat-bg);
+.preview-box {
+    aspect-ratio: 16/9;
+    background: var(--preview-bg);
     border-radius: 15px;
-    padding: 20px;
-    height: 500px;
+    border: 2px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
 }
 
-.chat-messages {
-    flex: 1;
-    overflow-y: auto;
-    margin-bottom: 20px;
-    padding: 10px;
+.placeholder-text {
+    color: #666;
+    font-size: 1.2rem;
+    text-align: center;
 }
 
-.message {
-    margin-bottom: 15px;
-    padding: 10px 15px;
-    border-radius: 10px;
-    max-width: 80%;
-}
-
-.user-message {
-    background: var(--user-message-bg);
-    margin-left: auto;
-    border: 1px solid var(--primary-color);
-}
-
-.ai-message {
-    background: var(--ai-message-bg);
-    margin-right: auto;
-    border: 1px solid var(--secondary-color);
-}
-
-.input-group {
+.controls {
     display: flex;
     gap: 10px;
+    justify-content: center;
 }
 
-#user-input {
+.control-btn {
+    background: var(--background-dark);
+    border: 2px solid var(--border-color);
+    color: var(--text-color);
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+}
+
+.control-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.control-btn:not(:disabled):hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 15px rgba(0, 255, 157, 0.2);
+}
+
+/* 输入部分 */
+.input-section {
     flex: 1;
-    min-height: 50px;
-    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.prompt-container {
+    position: relative;
+}
+
+#prompt-input {
+    width: 100%;
+    min-height: 120px;
+    padding: 15px;
     background: var(--background-dark);
     border: 2px solid var(--border-color);
     border-radius: 10px;
     color: var(--text-color);
-    resize: none;
+    font-size: 1rem;
+    resize: vertical;
+    transition: all 0.3s ease;
 }
 
-#user-input:focus {
+#prompt-input:focus {
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 15px rgba(0, 255, 157, 0.2);
 }
 
-/* 控制面板样式 */
-.controls-section {
-    display: flex;
-    gap: 30px;
-    margin-bottom: 40px;
+.character-count {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    color: #666;
+    font-size: 0.9rem;
 }
 
-.style-selector {
-    flex: 1;
-}
-
+/* 样式选择器 */
 .style-selector h2 {
     font-size: 1.5rem;
     margin-bottom: 20px;
@@ -231,8 +195,8 @@ body {
     border-color: var(--primary-color);
 }
 
+/* 设置面板 */
 .settings-panel {
-    flex: 1;
     background: var(--background-dark);
     padding: 20px;
     border-radius: 15px;
@@ -248,8 +212,12 @@ body {
     color: var(--primary-color);
 }
 
-.setting-item select,
-.setting-item input {
+.setting-item input[type="range"] {
+    width: 100%;
+    margin: 10px 0;
+}
+
+.setting-item select {
     width: 100%;
     padding: 8px;
     background: var(--background-light);
@@ -258,6 +226,7 @@ body {
     color: var(--text-color);
 }
 
+/* 生成按钮 */
 .glow-button {
     background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
     color: var(--background-dark);
@@ -296,11 +265,56 @@ body {
     100% { background-position: -200% 0; }
 }
 
+/* 加载部分 */
+.loading-section {
+    text-align: center;
+    padding: 30px;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid var(--border-color);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-text {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background: var(--background-dark);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    transition: width 0.3s ease;
+}
+
 .footer {
     text-align: center;
     margin-top: 40px;
     color: #666;
     font-size: 0.9rem;
+}
+
+.hidden {
+    display: none;
 }
 
 /* 响应式设计 */
@@ -313,6 +327,10 @@ body {
         font-size: 2.5rem;
     }
     
+    .animation-section {
+        flex-direction: column;
+    }
+    
     .style-buttons {
         flex-direction: column;
     }
@@ -321,20 +339,7 @@ body {
         width: 100%;
     }
     
-    .digital-human-section {
-        flex-direction: column;
-    }
-    
-    .controls-section {
-        flex-direction: column;
-    }
-    
-    .chat-container {
-        height: 400px;
-    }
-    
-    .avatar {
-        width: 150px;
-        height: 150px;
+    .preview-box {
+        aspect-ratio: 16/9;
     }
 } 

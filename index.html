@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HannahsToy - AI Digital Human</title>
+    <title>HannahsToy - AI Animation Creator</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
@@ -11,71 +11,81 @@
     <div class="container">
         <div class="header">
             <h1 class="title">HannahsToy</h1>
-            <p class="subtitle">AI Digital Human Interface</p>
+            <p class="subtitle">AI Animation Creator</p>
         </div>
 
-        <div class="digital-human-section">
-            <div class="avatar-container">
-                <div class="avatar" id="avatar">
-                    <!-- Avatar will be displayed here -->
+        <div class="animation-section">
+            <div class="preview-container">
+                <div class="preview-box" id="preview-box">
+                    <div class="placeholder-text">Your animation will appear here</div>
                 </div>
-                <div class="mood-indicator">
-                    <span class="mood-dot"></span>
-                    <span class="mood-text">Listening</span>
+                <div class="controls">
+                    <button id="play-btn" class="control-btn" disabled>
+                        <span class="emoji">▶️</span> Play
+                    </button>
+                    <button id="pause-btn" class="control-btn" disabled>
+                        <span class="emoji">⏸️</span> Pause
+                    </button>
+                    <button id="download-btn" class="control-btn" disabled>
+                        <span class="emoji">⬇️</span> Download
+                    </button>
                 </div>
             </div>
             
-            <div class="chat-container">
-                <div class="chat-messages" id="chat-messages">
-                    <!-- Chat messages will appear here -->
+            <div class="input-section">
+                <div class="prompt-container">
+                    <textarea id="prompt-input" placeholder="Describe your animation..."></textarea>
+                    <div class="character-count">0/500</div>
                 </div>
-                <div class="input-group">
-                    <textarea id="user-input" placeholder="Type your message here..."></textarea>
-                    <button id="send-button" class="glow-button">
-                        Send
-                    </button>
+                
+                <div class="style-selector">
+                    <h2>Animation Style</h2>
+                    <div class="style-buttons">
+                        <button class="style-btn active" data-style="anime">
+                            <span class="emoji">🎨</span> Anime
+                        </button>
+                        <button class="style-btn" data-style="realistic">
+                            <span class="emoji">📸</span> Realistic
+                        </button>
+                        <button class="style-btn" data-style="cartoon">
+                            <span class="emoji">✏️</span> Cartoon
+                        </button>
+                    </div>
                 </div>
+
+                <div class="settings-panel">
+                    <h2>Settings</h2>
+                    <div class="setting-item">
+                        <label>Duration (seconds)</label>
+                        <input type="range" id="duration-slider" min="1" max="10" value="3">
+                        <span id="duration-value">3s</span>
+                    </div>
+                    <div class="setting-item">
+                        <label>Frame Rate</label>
+                        <select id="fps-select">
+                            <option value="24">24 FPS</option>
+                            <option value="30" selected>30 FPS</option>
+                            <option value="60">60 FPS</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button id="generate-btn" class="glow-button">
+                    Generate Animation
+                </button>
             </div>
         </div>
 
-        <div class="controls-section">
-            <div class="style-selector">
-                <h2>Select Interaction Mode</h2>
-                <div class="style-buttons">
-                    <button class="style-btn active" data-style="casual">
-                        <span class="emoji">😊</span>
-                        Casual Chat
-                    </button>
-                    <button class="style-btn" data-style="professional">
-                        <span class="emoji">💼</span>
-                        Professional
-                    </button>
-                    <button class="style-btn" data-style="creative">
-                        <span class="emoji">🎨</span>
-                        Creative Mode
-                    </button>
-                </div>
-            </div>
-
-            <div class="settings-panel">
-                <h2>Settings</h2>
-                <div class="setting-item">
-                    <label>Voice</label>
-                    <select id="voice-select">
-                        <option value="female1">Female Voice 1</option>
-                        <option value="female2">Female Voice 2</option>
-                        <option value="male1">Male Voice 1</option>
-                    </select>
-                </div>
-                <div class="setting-item">
-                    <label>Response Speed</label>
-                    <input type="range" id="speed-slider" min="1" max="5" value="3">
-                </div>
+        <div class="loading-section hidden" id="loading">
+            <div class="spinner"></div>
+            <p class="loading-text">Creating your animation...</p>
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
             </div>
         </div>
 
         <div class="footer">
-            <p>Powered by Advanced AI Technology</p>
+            <p>Powered by Stable Diffusion AI</p>
         </div>
     </div>
     <script src="script.js"></script>
