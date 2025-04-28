@@ -16,4 +16,9 @@ exclude:
   - node_modules
   - vendor
   - .git
-  - .gitignore 
+  - .gitignore
+
+# Enable Jekyll processing
+include: [".html", ".css", ".js"]
+markdown: kramdown
+highlighter: rouge 
