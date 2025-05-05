@@ -197,4 +197,4 @@ function setupEventListeners() {
 }
 
 // Start the game
-initGame(); 
+initGame();
