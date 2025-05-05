@@ -1,59 +1,50 @@
- HannahsToy - AI-Powered Digital Life Creator 🎭✨
 
- 🌟 Project Overview
-HannahsToy is an innovative web application that combines AI technology with creative expression to solve two major challenges:
-1. Creating personalized AI memes with emotional depth
-2. Preserving and revitalizing digital legacies of historical figures and celebrities
+Poppik — The Meme-Powered Web3 Auction & Pricing Game（1.0 not finished yet)
 
-🎨 Features (Current & Planned)
+Poppik is a community-driven, meme-fueled, token-incentivized auction platform reinventing how value is priced, played with, and owned on the blockchain. Built with fun, speculation, and viral consensus at its core, Poppik lets users guess prices, win rewards, and trade fractionalized real-world & digital assets in a Roblox-style UI.
 
- Current Features
-- AI Meme Generator: Create unique, emotionally resonant memes in seconds
-- Multiple Style*: Choose from Quick Meme (1s), Short Story, or Full Adventure
-- Character Limit: Smart 100-character limit to ensure concise, impactful content
-- User-Friendly Interface: Cute, Jellycat-inspired design for an enjoyable experience.
 
-Coming Soon
-- Face Swap Technology: Advanced AI to create realistic digital representations
-- Emotional Intelligence: AI that understands and replicates emotional nuances
-- Historical Accuracy: Detailed research integration for authentic portrayals
-- Interactive Stories: Create dynamic narratives with historical figures
+Key Features
 
-🎯 Problem Statement
-1. AI Meme Challenge: Current AI memes often lack emotional depth and personal connection
-2. Digital Legacy: Many historical figures and celebrities lack authentic digital representations
-3. Cultural Preservation: Need for innovative ways to keep cultural icons alive in the digital age
+- **Auction + Voting Hybrid Game** — Guess the price of meme-worthy or RWA assets, and vote to shape the price consensus.
+- **Token Incentives (PIKP)** — Users earn $PIKP tokens by participating, voting, and engaging with assets.
+- **Fractionalized Ownership** — Popular assets are tokenized and distributed to voters and bidders.
+- **Community-Priced RWA** — From luxury watches to meme NFTs to real estate, value is set by the crowd.
+- **Meme Culture UI** — Roblox-style, pastel-colored, lollipop-cyberpunk aesthetic for viral appeal.
 
-## 💡 Solution
-HannahsToy addresses these challenges by:
-1. Using advanced AI to create memes with emotional intelligence
-2. Implementing face swap technology for realistic digital representations
-3. Combining historical research with AI to create authentic digital personas
+How It Works
 
-🚀 Technical Implementation
-- Frontend: HTML, CSS, JavaScript
-- AI Integration: OpenAI API for image generation
-- Future: Integration with advanced face swap and emotional AI technologies
+1. Assets are Listed — Users or partners list rare/meme/RWA items for consensus-based auction.
+2. Users Vote & Bid — Everyone votes on what it’s worth. Bidders try to win at a fair price.
+3. Price is Set by Consensus** — The most voted price becomes the benchmark.
+4. Rewards & Tokens — Winners get NFTs or fractions, voters earn $PIKP, and engagement is gamified.
 
-🌈 Vision
-Our goal is to create a platform where:
-- Memes become meaningful expressions of emotion
-- Historical figures can interact with modern audiences
-- Digital legacies are preserved with authenticity and respect
+ Tech Stack
 
-🔮 Future Developments
-1. **Enhanced AI Models**: More sophisticated emotional understanding
-2. **Historical Database**: Comprehensive research integration
-3. **Interactive Features**: Real-time interaction with digital personas
-4. **Community Features**: User-generated content and sharing
+- Frontend:React.js + Three.js + Tailwind (Roblox-style UI)
+- Backend:Node.js + Firebase / Supabase
+- Smart Contracts:Solidity on Base L2 (EVM-compatible)
+- Wallet Integration:WalletConnect + Auto-Generated Smart Wallets
+- Token: $PIKP (ERC20 Utility Token)
 
- 🤝 Contributing
-We welcome contributions to help solve these important challenges:
-1. AI development for emotional intelligence
-2. Historical research integration
-3. User interface improvements
-4. Testing and feedback
+MVP Launch
 
+- Prototype:Try our interactive MVP at 
+- Testnet Contracts:Coming soon on Base Sepolia
+- Token Launch:Q4 2025 (Public Sale + Airdrops)
+
+Getting Started
+
+```bash
+# Clone repo
+git clone https://github.com/poppik-project/poppik.git
+cd poppik
+
+# Install dependencies
+npm install
+
+# Run locally
+npm run dev
 📝 License
 This project is open-source and available under the MIT License.
 
