@@ -18,6 +18,34 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentAnimation = null;
     let isPlaying = false;
 
+    let items = [
+        { 
+            title: "Alien Egg Lamp", 
+            image: "https://picsum.photos/seed/alien/500/500"
+        },
+        { 
+            title: "NFT Toilet Paper", 
+            image: "https://picsum.photos/seed/nft/500/500"
+        },
+        { 
+            title: "Floating Dog Statue", 
+            image: "https://picsum.photos/seed/dog/500/500"
+        },
+        { 
+            title: "Crypto Banana", 
+            image: "https://picsum.photos/seed/banana/500/500"
+        },
+        { 
+            title: "Invisible Chair", 
+            image: "https://picsum.photos/seed/chair/500/500"
+        }
+    ];
+
+    let currentItem = 0;
+    let yes = 0;
+    let no = 0;
+    let points = 0;
+
     // 更新字符计数
     promptInput.addEventListener('input', () => {
         const count = promptInput.value.length;
@@ -47,33 +75,67 @@ document.addEventListener('DOMContentLoaded', () => {
     generateBtn.addEventListener('click', async () => {
         const prompt = promptInput.value.trim();
         if (!prompt) {
-            alert('Please enter a description for your animation');
+            alert('请输入动画描述');
             return;
         }
 
-        if (prompt.length > 500) {
-            alert('Description is too long. Maximum 500 characters.');
-            return;
-        }
-
-        // 显示加载状态
-        loadingSection.classList.remove('hidden');
-        generateBtn.disabled = true;
+        // 显示加载动画
+        loadingSection.style.display = 'block';
         progressBar.style.width = '0%';
+        generateBtn.disabled = true;
 
         try {
-            // 这里可以替换为实际的API调用
-            await simulateAnimationGeneration(prompt);
+            // 获取用户选择的参数
+            const duration = durationSlider.value;
+            const fps = fpsSelect.value;
+            const style = selectedStyle;
+
+            // 构建请求数据
+            const requestData = {
+                prompt: prompt,
+                duration: duration,
+                fps: fps,
+                style: style
+            };
+
+            // 发送请求到后端
+            const response = await fetch('/api/generate-animation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            });
+
+            if (!response.ok) {
+                throw new Error('生成失败');
+            }
+
+            const data = await response.json();
             
-            // 启用控制按钮
-            playBtn.disabled = false;
-            pauseBtn.disabled = false;
-            downloadBtn.disabled = false;
+            previewBox.innerHTML = `
+                <img id="generatedImage" src="${data.imageUrl}" alt="生成的图片">
+            `;
+
+            playBtn.disabled = true;  // 暂时禁用播放按钮
+            pauseBtn.disabled = true;  // 暂时禁用暂停按钮
+            downloadBtn.disabled = false;  // 启用下载按钮
+
+            // 更新下载功能
+            downloadBtn.addEventListener('click', () => {
+                const link = document.createElement('a');
+                link.href = data.imageUrl;
+                link.download = 'generated-image.png';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+
         } catch (error) {
-            console.error('Error generating animation:', error);
-            alert('Failed to generate animation. Please try again.');
+            console.error('生成动画时出错:', error);
+            alert('生成动画失败，请稍后重试');
         } finally {
-            loadingSection.classList.add('hidden');
+            loadingSection.style.display = 'none';
             generateBtn.disabled = false;
         }
     });
@@ -127,4 +189,72 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 200);
         });
     }
+
+    // 图片上传处理
+    document.getElementById('imageUpload').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // 预览上传的图片
+                document.getElementById('itemImage').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // 添加新物品
+    function addNewItem() {
+        const itemName = document.getElementById('itemName').value.trim();
+        const imageUrl = document.getElementById('itemImage').src;
+        
+        if (!itemName) {
+            alert('Please enter an item name!');
+            return;
+        }
+        
+        items.push({
+            title: itemName,
+            image: imageUrl
+        });
+        
+        // 清空输入
+        document.getElementById('itemName').value = '';
+        document.getElementById('imageUpload').value = '';
+        
+        // 显示新添加的物品
+        currentItem = items.length - 1;
+        updateDisplay();
+        
+        alert('Item added successfully!');
+    }
+
+    function updateDisplay() {
+        document.getElementById("itemImage").src = items[currentItem].image;
+        document.getElementById("itemTitle").innerText = items[currentItem].title;
+        yes = 0;
+        no = 0;
+        document.getElementById("yesVotes").innerText = `Worth It: ${yes}`;
+        document.getElementById("noVotes").innerText = `Not Worth It: ${no}`;
+    }
+
+    function vote(type) {
+        if (type === "yes") {
+            yes++;
+            points += 2;
+        } else {
+            no++;
+            points += 1;
+        }
+        document.getElementById("yesVotes").innerText = `Worth It: ${yes}`;
+        document.getElementById("noVotes").innerText = `Not Worth It: ${no}`;
+        document.getElementById("points").innerText = points;
+    }
+
+    function nextItem() {
+        currentItem = (currentItem + 1) % items.length;
+        updateDisplay();
+    }
+
+    window.onload = updateDisplay;
 }); 
