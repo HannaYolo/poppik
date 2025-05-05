@@ -3,40 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PikPop MVP</title>
-    <link rel="stylesheet" href="style.css">
+    <title>PopPik - Meme Auction Game</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1>PikPop Auction Game</h1>
-        
-        <!-- 添加图片上传区域 -->
-        <div class="upload-section">
-            <h2>Upload Your Item</h2>
-            <input type="file" id="imageUpload" accept="image/*" style="display: none;">
-            <button onclick="document.getElementById('imageUpload').click()" class="upload-button">
-                Upload Image
-            </button>
-            <input type="text" id="itemName" placeholder="Enter item name" class="item-name-input">
-            <button onclick="addNewItem()" class="add-button">Add Item</button>
-        </div>
+    <div class="game-container">
+        <header class="game-header">
+            <div class="points-display">
+                <span class="points-label">Points:</span>
+                <span id="points">1000</span>
+            </div>
+            <h1>PopPik</h1>
+        </header>
 
-        <div class="item-display">
-            <img id="itemImage" src="https://picsum.photos/500/500" alt="Auction Item" />
-            <p id="itemTitle">Alien Egg Lamp</p>
-        </div>
-        <div class="vote-buttons">
-            <button onclick="vote('yes')">Worth It</button>
-            <button onclick="vote('no')">Not Worth It</button>
-        </div>
-        <div class="results">
-            <p id="yesVotes">Worth It: 0</p>
-            <p id="noVotes">Not Worth It: 0</p>
-        </div>
-        <p class="points">Your Points: <span id="points">0</span></p>
-        <button onclick="nextItem()" class="next-button">Next Item</button>
+        <main class="game-content">
+            <div class="auction-section">
+                <div class="current-auction">
+                    <h2>Current Auction</h2>
+                    <div id="current-meme" class="meme-display">
+                        <img id="meme-image" src="" alt="Current Meme">
+                        <div class="meme-info">
+                            <h3 id="meme-title">Loading...</h3>
+                            <p id="meme-description">Description loading...</p>
+                        </div>
+                    </div>
+                    <div class="auction-controls">
+                        <div class="price-display">
+                            <span>Current Price:</span>
+                            <span id="current-price">0</span>
+                        </div>
+                        <div class="bid-controls">
+                            <input type="number" id="bid-amount" min="1" value="1">
+                            <button id="place-bid" class="roblox-button">Place Bid</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="community-section">
+                <h2>Community Consensus</h2>
+                <div class="consensus-meter">
+                    <div class="meter-bar">
+                        <div id="consensus-level" class="meter-fill"></div>
+                    </div>
+                    <span id="consensus-value">50%</span>
+                </div>
+                <div class="community-votes">
+                    <button id="vote-up" class="vote-button">👍</button>
+                    <button id="vote-down" class="vote-button">👎</button>
+                </div>
+            </div>
+
+            <div class="leaderboard-section">
+                <h2>Top Bidders</h2>
+                <div id="leaderboard" class="leaderboard-list">
+                    <!-- Leaderboard items will be added dynamically -->
+                </div>
+            </div>
+        </main>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>

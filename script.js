@@ -1,260 +1,200 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // 获取DOM元素
-    const previewBox = document.getElementById('preview-box');
-    const promptInput = document.getElementById('prompt-input');
-    const characterCount = document.querySelector('.character-count');
-    const styleButtons = document.querySelectorAll('.style-btn');
-    const durationSlider = document.getElementById('duration-slider');
-    const durationValue = document.getElementById('duration-value');
-    const fpsSelect = document.getElementById('fps-select');
-    const generateBtn = document.getElementById('generate-btn');
-    const playBtn = document.getElementById('play-btn');
-    const pauseBtn = document.getElementById('pause-btn');
-    const downloadBtn = document.getElementById('download-btn');
-    const loadingSection = document.getElementById('loading');
-    const progressBar = document.getElementById('progress');
+// Game state
+let gameState = {
+    points: 1000,
+    currentMeme: null,
+    currentPrice: 0,
+    consensus: 50,
+    leaderboard: [],
+    auctionTimer: null,
+    auctionDuration: 30, // seconds
+    timeLeft: 30
+};
 
-    let selectedStyle = 'anime';
-    let currentAnimation = null;
-    let isPlaying = false;
+// Sample memes (in a real app, this would come from a server)
+const sampleMemes = [
+    {
+        id: 1,
+        title: "PopPik Classic",
+        image: "https://i.imgur.com/8tMUxoP.png",
+        description: "A rare PopPik meme from the early days"
+    },
+    {
+        id: 2,
+        title: "PopPik Legend",
+        image: "https://i.imgur.com/3pzRj9n.png",
+        description: "One of the most popular PopPik memes"
+    },
+    {
+        id: 3,
+        title: "PopPik Viral",
+        image: "https://i.imgur.com/example3.png",
+        description: "A viral PopPik meme that broke the internet"
+    }
+];
 
-    let items = [
-        { 
-            title: "Alien Egg Lamp", 
-            image: "https://picsum.photos/seed/alien/500/500"
-        },
-        { 
-            title: "NFT Toilet Paper", 
-            image: "https://picsum.photos/seed/nft/500/500"
-        },
-        { 
-            title: "Floating Dog Statue", 
-            image: "https://picsum.photos/seed/dog/500/500"
-        },
-        { 
-            title: "Crypto Banana", 
-            image: "https://picsum.photos/seed/banana/500/500"
-        },
-        { 
-            title: "Invisible Chair", 
-            image: "https://picsum.photos/seed/chair/500/500"
-        }
-    ];
+// DOM Elements
+const pointsDisplay = document.getElementById('points');
+const memeImage = document.getElementById('meme-image');
+const memeTitle = document.getElementById('meme-title');
+const memeDescription = document.getElementById('meme-description');
+const currentPrice = document.getElementById('current-price');
+const bidAmount = document.getElementById('bid-amount');
+const placeBidButton = document.getElementById('place-bid');
+const voteUpButton = document.getElementById('vote-up');
+const voteDownButton = document.getElementById('vote-down');
+const consensusLevel = document.getElementById('consensus-level');
+const consensusValue = document.getElementById('consensus-value');
+const leaderboardList = document.getElementById('leaderboard');
 
-    let currentItem = 0;
-    let yes = 0;
-    let no = 0;
-    let points = 0;
+// Initialize game
+function initGame() {
+    updatePointsDisplay();
+    startNewAuction();
+    setupEventListeners();
+    loadLeaderboard();
+}
 
-    // 更新字符计数
-    promptInput.addEventListener('input', () => {
-        const count = promptInput.value.length;
-        characterCount.textContent = `${count}/500`;
-        if (count > 500) {
-            characterCount.style.color = '#ff4444';
-        } else {
-            characterCount.style.color = '#666';
-        }
-    });
+// Update points display
+function updatePointsDisplay() {
+    pointsDisplay.textContent = gameState.points;
+}
 
-    // 更新持续时间显示
-    durationSlider.addEventListener('input', () => {
-        durationValue.textContent = `${durationSlider.value}s`;
-    });
+// Start new auction
+function startNewAuction() {
+    // Select random meme
+    gameState.currentMeme = sampleMemes[Math.floor(Math.random() * sampleMemes.length)];
+    gameState.currentPrice = 0;
+    gameState.consensus = 50;
+    gameState.timeLeft = gameState.auctionDuration;
 
-    // 样式选择
-    styleButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            styleButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-            selectedStyle = button.dataset.style;
-        });
-    });
+    // Update UI
+    memeImage.src = gameState.currentMeme.image;
+    memeTitle.textContent = gameState.currentMeme.title;
+    memeDescription.textContent = gameState.currentMeme.description;
+    currentPrice.textContent = gameState.currentPrice;
+    updateConsensusDisplay();
 
-    // 生成动画
-    generateBtn.addEventListener('click', async () => {
-        const prompt = promptInput.value.trim();
-        if (!prompt) {
-            alert('请输入动画描述');
-            return;
-        }
+    // Start auction timer
+    startAuctionTimer();
+}
 
-        // 显示加载动画
-        loadingSection.style.display = 'block';
-        progressBar.style.width = '0%';
-        generateBtn.disabled = true;
-
-        try {
-            // 获取用户选择的参数
-            const duration = durationSlider.value;
-            const fps = fpsSelect.value;
-            const style = selectedStyle;
-
-            // 构建请求数据
-            const requestData = {
-                prompt: prompt,
-                duration: duration,
-                fps: fps,
-                style: style
-            };
-
-            // 发送请求到后端
-            const response = await fetch('/api/generate-animation', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(requestData)
-            });
-
-            if (!response.ok) {
-                throw new Error('生成失败');
-            }
-
-            const data = await response.json();
-            
-            previewBox.innerHTML = `
-                <img id="generatedImage" src="${data.imageUrl}" alt="生成的图片">
-            `;
-
-            playBtn.disabled = true;  // 暂时禁用播放按钮
-            pauseBtn.disabled = true;  // 暂时禁用暂停按钮
-            downloadBtn.disabled = false;  // 启用下载按钮
-
-            // 更新下载功能
-            downloadBtn.addEventListener('click', () => {
-                const link = document.createElement('a');
-                link.href = data.imageUrl;
-                link.download = 'generated-image.png';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            });
-
-        } catch (error) {
-            console.error('生成动画时出错:', error);
-            alert('生成动画失败，请稍后重试');
-        } finally {
-            loadingSection.style.display = 'none';
-            generateBtn.disabled = false;
-        }
-    });
-
-    // 播放控制
-    playBtn.addEventListener('click', () => {
-        if (currentAnimation && !isPlaying) {
-            isPlaying = true;
-            playBtn.disabled = true;
-            pauseBtn.disabled = false;
-            // 这里添加实际的播放逻辑
-        }
-    });
-
-    pauseBtn.addEventListener('click', () => {
-        if (currentAnimation && isPlaying) {
-            isPlaying = false;
-            playBtn.disabled = false;
-            pauseBtn.disabled = true;
-            // 这里添加实际的暂停逻辑
-        }
-    });
-
-    // 下载动画
-    downloadBtn.addEventListener('click', () => {
-        if (currentAnimation) {
-            // 这里添加实际的下载逻辑
-            const link = document.createElement('a');
-            link.href = currentAnimation;
-            link.download = 'animation.mp4';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-    });
-
-    // 模拟动画生成过程
-    async function simulateAnimationGeneration(prompt) {
-        return new Promise((resolve) => {
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += 5;
-                progressBar.style.width = `${progress}%`;
-                
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    // 模拟生成的动画URL
-                    currentAnimation = 'https://example.com/animation.mp4';
-                    resolve();
-                }
-            }, 200);
-        });
+// Start auction timer
+function startAuctionTimer() {
+    if (gameState.auctionTimer) {
+        clearInterval(gameState.auctionTimer);
     }
 
-    // 图片上传处理
-    document.getElementById('imageUpload').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                // 预览上传的图片
-                document.getElementById('itemImage').src = e.target.result;
-            };
-            reader.readAsDataURL(file);
+    gameState.auctionTimer = setInterval(() => {
+        gameState.timeLeft--;
+        
+        if (gameState.timeLeft <= 0) {
+            endAuction();
         }
-    });
+    }, 1000);
+}
 
-    // 添加新物品
-    function addNewItem() {
-        const itemName = document.getElementById('itemName').value.trim();
-        const imageUrl = document.getElementById('itemImage').src;
-        
-        if (!itemName) {
-            alert('Please enter an item name!');
-            return;
-        }
-        
-        items.push({
-            title: itemName,
-            image: imageUrl
-        });
-        
-        // 清空输入
-        document.getElementById('itemName').value = '';
-        document.getElementById('imageUpload').value = '';
-        
-        // 显示新添加的物品
-        currentItem = items.length - 1;
-        updateDisplay();
-        
-        alert('Item added successfully!');
+// End auction
+function endAuction() {
+    clearInterval(gameState.auctionTimer);
+    
+    // Add winner to leaderboard
+    if (gameState.currentPrice > 0) {
+        const winner = {
+            name: "PopPik Player " + Math.floor(Math.random() * 1000),
+            points: gameState.currentPrice,
+            meme: gameState.currentMeme.title
+        };
+        addToLeaderboard(winner);
+        saveLeaderboard();
     }
 
-    function updateDisplay() {
-        document.getElementById("itemImage").src = items[currentItem].image;
-        document.getElementById("itemTitle").innerText = items[currentItem].title;
-        yes = 0;
-        no = 0;
-        document.getElementById("yesVotes").innerText = `Worth It: ${yes}`;
-        document.getElementById("noVotes").innerText = `Not Worth It: ${no}`;
+    // Start new auction after 3 seconds
+    setTimeout(startNewAuction, 3000);
+}
+
+// Place bid
+function placeBid() {
+    const amount = parseInt(bidAmount.value);
+    
+    if (amount > gameState.points) {
+        alert("Not enough PopPik points!");
+        return;
     }
 
-    function vote(type) {
-        if (type === "yes") {
-            yes++;
-            points += 2;
-        } else {
-            no++;
-            points += 1;
-        }
-        document.getElementById("yesVotes").innerText = `Worth It: ${yes}`;
-        document.getElementById("noVotes").innerText = `Not Worth It: ${no}`;
-        document.getElementById("points").innerText = points;
+    if (amount <= gameState.currentPrice) {
+        alert("Bid must be higher than current price!");
+        return;
     }
 
-    function nextItem() {
-        currentItem = (currentItem + 1) % items.length;
-        updateDisplay();
-    }
+    gameState.points -= amount;
+    gameState.currentPrice = amount;
+    updatePointsDisplay();
+    currentPrice.textContent = gameState.currentPrice;
 
-    window.onload = updateDisplay;
-}); 
+    // Reset timer
+    gameState.timeLeft = gameState.auctionDuration;
+}
+
+// Update consensus
+function updateConsensus(direction) {
+    const change = direction === 'up' ? 5 : -5;
+    gameState.consensus = Math.max(0, Math.min(100, gameState.consensus + change));
+    updateConsensusDisplay();
+    
+    // Adjust price based on consensus
+    const priceMultiplier = 1 + (gameState.consensus - 50) / 100;
+    gameState.currentPrice = Math.round(gameState.currentPrice * priceMultiplier);
+    currentPrice.textContent = gameState.currentPrice;
+}
+
+// Update consensus display
+function updateConsensusDisplay() {
+    consensusLevel.style.width = `${gameState.consensus}%`;
+    consensusValue.textContent = `${gameState.consensus}%`;
+}
+
+// Add to leaderboard
+function addToLeaderboard(player) {
+    gameState.leaderboard.push(player);
+    gameState.leaderboard.sort((a, b) => b.points - a.points);
+    gameState.leaderboard = gameState.leaderboard.slice(0, 5); // Keep top 5
+    updateLeaderboardDisplay();
+}
+
+// Update leaderboard display
+function updateLeaderboardDisplay() {
+    leaderboardList.innerHTML = gameState.leaderboard
+        .map((player, index) => `
+            <div class="leaderboard-item">
+                <span class="rank">#${index + 1}</span>
+                <span class="name">${player.name}</span>
+                <span class="meme">${player.meme}</span>
+                <span class="points">${player.points} pts</span>
+            </div>
+        `)
+        .join('');
+}
+
+// Save leaderboard to localStorage
+function saveLeaderboard() {
+    localStorage.setItem('poppikLeaderboard', JSON.stringify(gameState.leaderboard));
+}
+
+// Load leaderboard from localStorage
+function loadLeaderboard() {
+    const savedLeaderboard = localStorage.getItem('poppikLeaderboard');
+    if (savedLeaderboard) {
+        gameState.leaderboard = JSON.parse(savedLeaderboard);
+        updateLeaderboardDisplay();
+    }
+}
+
+// Setup event listeners
+function setupEventListeners() {
+    placeBidButton.addEventListener('click', placeBid);
+    voteUpButton.addEventListener('click', () => updateConsensus('up'));
+    voteDownButton.addEventListener('click', () => updateConsensus('down'));
+}
+
+// Start the game
+initGame(); 
