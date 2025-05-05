@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PopPik - Meme Auction Game</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+</head>
+<body>
+    <div class="game-container">
+        <header class="game-header">
+            <div class="points-display">
+                <span class="points-label">Points:</span>
+                <span id="points">1000</span>
+            </div>
+            <h1>PopPik</h1>
+        </header>
+
+        <main class="game-content">
+            <div class="auction-section">
+                <div class="current-auction">
+                    <h2>Current Auction</h2>
+                    <div id="current-meme" class="meme-display">
+                        <img id="meme-image" src="" alt="Current Meme">
+                        <div class="meme-info">
+                            <h3 id="meme-title">Loading...</h3>
+                            <p id="meme-description">Description loading...</p>
+                        </div>
+                    </div>
+                    <div class="auction-controls">
+                        <div class="price-display">
+                            <span>Current Price:</span>
+                            <span id="current-price">0</span>
+                        </div>
+                        <div class="bid-controls">
+                            <input type="number" id="bid-amount" min="1" value="1">
+                            <button id="place-bid" class="roblox-button">Place Bid</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="community-section">
+                <h2>Community Consensus</h2>
+                <div class="consensus-meter">
+                    <div class="meter-bar">
+                        <div id="consensus-level" class="meter-fill"></div>
+                    </div>
+                    <span id="consensus-value">50%</span>
+                </div>
+                <div class="community-votes">
+                    <button id="vote-up" class="vote-button">👍</button>
+                    <button id="vote-down" class="vote-button">👎</button>
+                </div>
+            </div>
+
+            <div class="chat-section">
+                <h2>Live Chat</h2>
+                <div id="chat-messages" class="chat-messages">
+                    <!-- Chat messages will be added dynamically -->
+                </div>
+                <div class="chat-input-container">
+                    <input type="text" id="chat-input" placeholder="Type your message...">
+                    <button id="send-chat" class="roblox-button">Send</button>
+                </div>
+            </div>
+
+            <div class="leaderboard-section">
+                <h2>Top Bidders</h2>
+                <div id="leaderboard" class="leaderboard-list">
+                    <!-- Leaderboard items will be added dynamically -->
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
